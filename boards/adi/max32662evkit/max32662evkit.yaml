@@ -17,6 +17,7 @@ supported:
   - spi
   - adc
   - counter
+  - rtc_counter
   - pwm
 ram: 80
 flash: 256
