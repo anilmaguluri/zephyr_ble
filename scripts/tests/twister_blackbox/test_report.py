@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2023 Intel Corporation
+# Copyright (c) 2023-2024 Intel Corporation
 #
 # SPDX-License-Identifier: Apache-2.0
 """
@@ -350,12 +350,12 @@ class TestReport:
             (
                 os.path.join(TEST_DATA, 'tests', 'dummy'),
                 ['--detailed-skipped-report'],
-                {'qemu_x86': 5, 'intel_adl_crb': 1}
+                {'qemu_x86': 6, 'intel_adl_crb': 1}
             ),
             (
                 os.path.join(TEST_DATA, 'tests', 'dummy'),
                 ['--detailed-skipped-report', '--report-filtered'],
-                {'qemu_x86': 6, 'intel_adl_crb': 6}
+                {'qemu_x86': 7, 'intel_adl_crb': 7}
             ),
         ],
         ids=['dummy tests', 'dummy tests with filtered']
