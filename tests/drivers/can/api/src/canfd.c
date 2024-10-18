@@ -589,4 +589,4 @@ void *canfd_setup(void)
 	return NULL;
 }
 
-ZTEST_SUITE(canfd, canfd_predicate, canfd_setup, NULL, NULL, NULL);
+ZTEST_SUITE(canfd, canfd_predicate, canfd_setup, before_test, NULL, NULL);

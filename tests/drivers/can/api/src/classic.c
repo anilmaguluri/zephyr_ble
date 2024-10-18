@@ -1444,4 +1444,4 @@ void *can_classic_setup(void)
 	return NULL;
 }
 
-ZTEST_SUITE(can_classic, NULL, can_classic_setup, NULL, NULL, NULL);
+ZTEST_SUITE(can_classic, NULL, can_classic_setup, before_test, NULL, NULL);
