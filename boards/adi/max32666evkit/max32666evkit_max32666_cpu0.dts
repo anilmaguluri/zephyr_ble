@@ -105,3 +105,7 @@
 &wdt0 {
 	status = "okay";
 };
+
+&rtc_counter {
+	status = "okay";
+};
