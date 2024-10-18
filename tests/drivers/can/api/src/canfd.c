@@ -439,6 +439,29 @@ ZTEST_USER(canfd, test_set_bitrate_too_high)
 }
 
 /**
+ * @brief Test setting max supported data phase bitrate.
+ */
+ZTEST_USER(canfd, test_set_data_bitrate_max_fd)
+{
+	uint32_t max = can_get_bitrate_max(can_dev);
+	int err;
+
+	TC_PRINT("max: %d\n", max);
+
+	err = can_stop(can_dev);
+	zassert_equal(err, 0, "failed to stop CAN controller (err %d)", err);
+
+	err = can_set_bitrate_data(can_dev, max);
+	zassert_equal(err, 0, "highest data bitrate NOT accepted");
+
+	err = can_set_bitrate_data(can_dev, CONFIG_CAN_DEFAULT_BITRATE_DATA);
+	zassert_equal(err, 0, "failed to restore default data bitrate");
+
+	err = can_start(can_dev);
+	zassert_equal(err, 0, "failed to start CAN controller (err %d)", err);
+}
+
+/**
  * @brief Test using an invalid sample point.
  */
 ZTEST_USER(canfd, test_invalid_sample_point)
