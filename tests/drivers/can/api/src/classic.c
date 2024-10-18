@@ -530,6 +530,29 @@ ZTEST_USER(can_classic, test_set_bitrate_too_high)
 }
 
 /**
+ * @brief Test setting CAN bitrate to min.
+ */
+ZTEST_USER(can_classic, test_set_bitrate_equal_min)
+{
+	uint32_t min = can_get_bitrate_min(can_dev);
+	int err;
+
+	TC_PRINT("min: %d\n", min);
+
+	err = can_stop(can_dev);
+	zassert_equal(err, 0, "failed to stop CAN controller (err %d)", err);
+
+	err = can_set_bitrate(can_dev, min);
+	zassert_equal(err, 0, "lowest bitrate NOT accepted");
+
+	err = can_set_bitrate(can_dev, CONFIG_CAN_DEFAULT_BITRATE);
+	zassert_equal(err, 0, "failed to restore default bitrate");
+
+	err = can_start(can_dev);
+	zassert_equal(err, 0, "failed to start CAN controller (err %d)", err);
+}
+
+/**
  * @brief Test using an invalid sample point.
  */
 ZTEST_USER(can_classic, test_invalid_sample_point)
