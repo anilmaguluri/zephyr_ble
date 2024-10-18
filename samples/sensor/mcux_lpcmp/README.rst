@@ -27,7 +27,7 @@ Building and Running
 
 Building and Running for NXP FRDM-MCXN947
 =========================================
-Build the application for the :ref:`frdm_mcxn947` board, and adjust the
+Build the application for the :zephyr:board:`frdm_mcxn947` board, and adjust the
 LPCMP positive input port voltage by changing the voltage input to J2-17.
 
 .. zephyr-app-commands::
