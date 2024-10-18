@@ -616,6 +616,17 @@ ZTEST(can_classic, test_add_filter)
 }
 
 /**
+ * @brief Test adding filter without callback.
+ */
+ZTEST(can_classic, test_add_filter_without_callback)
+{
+	int err;
+
+	err = can_add_rx_filter(can_dev, NULL, NULL, &test_std_filter_1);
+	zassert_equal(err, -EINVAL, "added filter with NULL callback");
+}
+
+/**
  * @brief Test adding an invalid CAN RX filter.
  *
  * @param dev   Pointer to the device structure for the driver instance.
