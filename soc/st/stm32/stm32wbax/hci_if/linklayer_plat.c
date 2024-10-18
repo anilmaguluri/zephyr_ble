@@ -30,6 +30,10 @@ typedef void (*radio_isr_cb_t) (void);
 radio_isr_cb_t radio_callback;
 radio_isr_cb_t low_isr_callback;
 
+/* Radio bus clock control variables */
+uint8_t AHB5_SwitchedOff;
+uint32_t radio_sleep_timer_val;
+
 extern const struct device *rng_dev;
 
 /* Radio critical sections */
@@ -44,6 +48,9 @@ volatile uint8_t radio_sw_low_isr_is_running_high_prio;
 
 void LINKLAYER_PLAT_ClockInit(void)
 {
+	AHB5_SwitchedOff = 0;
+	radio_sleep_timer_val = 0;
+
 	LL_PWR_EnableBkUpAccess();
 
 	/* Select LSE as Sleep CLK */
@@ -314,3 +321,27 @@ void LINKLAYER_PLAT_SCHLDR_TIMING_UPDATE_NOT(Evnt_timing_t *p_evnt_timing) {}
 void LINKLAYER_PLAT_EnableOSContextSwitch(void) {}
 
 void LINKLAYER_PLAT_DisableOSContextSwitch(void) {}
+
+void LINKLAYER_PLAT_NotifyWFIEnter(void)
+{
+	/* Check if Radio state will allow the AHB5 clock to be cut */
+
+	/* AHB5 clock will be cut in the following cases:
+	 * - 2.4GHz radio is not in ACTIVE mode (in SLEEP or DEEPSLEEP mode).
+	 * - RADIOSMEN and STRADIOCLKON bits are at 0.
+	 */
+	if ((LL_PWR_GetRadioMode() != LL_PWR_RADIO_ACTIVE_MODE) ||
+	   ((__HAL_RCC_RADIO_IS_CLK_SLEEP_ENABLED() == 0) &&
+	   (LL_RCC_RADIO_IsEnabledSleepTimerClock() == 0))) {
+		AHB5_SwitchedOff = 1;
+	}
+}
+
+void LINKLAYER_PLAT_NotifyWFIExit(void)
+{
+	/* Check if AHB5 clock has been turned of and needs resynchronisation */
+	if (AHB5_SwitchedOff) {
+		/* Read sleep register as earlier as possible */
+		radio_sleep_timer_val = ll_intf_cmn_get_slptmr_value();
+	}
+}
