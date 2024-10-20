@@ -9,6 +9,7 @@
 
 #include <zephyr/drivers/display.h>
 #include <zephyr/drivers/video.h>
+#include <zephyr/drivers/video/formats.h>
 
 #define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
 #include <zephyr/logging/log.h>

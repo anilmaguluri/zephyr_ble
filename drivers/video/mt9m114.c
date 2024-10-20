@@ -12,6 +12,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/drivers/video.h>
+#include <zephyr/drivers/video/formats.h>
 #include <zephyr/drivers/i2c.h>
 
 LOG_MODULE_REGISTER(video_mt9m114, CONFIG_VIDEO_LOG_LEVEL);

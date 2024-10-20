@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/irq.h>
 #include <zephyr/drivers/video.h>
+#include <zephyr/drivers/video/formats.h>
 #include <zephyr/drivers/pinctrl.h>
 
 #include <fsl_csi.h>
