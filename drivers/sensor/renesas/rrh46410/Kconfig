@@ -1,0 +1,14 @@
+# RRH46410 air quality sensor
+
+# Copyright (c) 2024 Renesas Electronics Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig RRH46410
+	bool "RRH46410 sensor"
+	default y
+	depends on DT_HAS_RENESAS_RRH46410_ENABLED
+	depends on UART_INTERRUPT_DRIVEN
+	depends on GPIO
+
+	help
+	  Enable driver for RRH46410 TVOC sensor.
