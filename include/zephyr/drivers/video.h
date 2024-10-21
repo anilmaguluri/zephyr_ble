@@ -1,16 +1,16 @@
-/**
- * @file
- *
- * @brief Public APIs for Video.
- */
-
 /*
  * Copyright (c) 2019 Linaro Limited.
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_VIDEO_H_
-#define ZEPHYR_INCLUDE_VIDEO_H_
+
+/**
+ * @file
+ * @brief Public APIs for Video.
+ */
+
+#ifndef ZEPHYR_INCLUDE_DRIVERS_VIDEO_H_
+#define ZEPHYR_INCLUDE_DRIVERS_VIDEO_H_
 
 /**
  * @brief Video Interface
@@ -21,11 +21,12 @@
  * @{
  */
 
-#include <zephyr/device.h>
 #include <stddef.h>
-#include <zephyr/kernel.h>
 
+#include <zephyr/device.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/drivers/video/formats.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,6 +37,30 @@ extern "C" {
  * buffers the size of the video frame
  */
 #define LINE_COUNT_HEIGHT (-1)
+
+/**
+ * @brief Print formatter to use in printf() style format strings.
+ *
+ * This prints a video format in the form of "{fourcc} {width}x{height}" format
+ * string for use along with @ref PRIvfmt_arg.
+ *
+ * @code{.c}
+ * LOG_DBG("Setting format to " PRIvfmt " at %u FPS", PRIvfmt_arg(fmt), fps);
+ * @endcode
+ */
+#define PRIvfmt "%c%c%c%c %ux%u"
+
+/**
+ * @brief Argument formatter for use in printf() style format strings.
+ *
+ * This conditions a video format argument for use with @ref PRIvfmt.
+ *
+ * @param fmt Pointer to a @ref video_format that will be formatted
+ * @return list of parameters that match @ref PRIvfmt specification
+ */
+#define PRIvfmt_arg(fmt)                                                                           \
+	(fmt)->pixelformat, (fmt)->pixelformat >> 8, (fmt)->pixelformat >> 16,                     \
+	(fmt)->pixelformat >> 24, (fmt)->width, (fmt)->height
 
 /**
  * @struct video_format
@@ -753,79 +778,39 @@ struct video_buffer *video_buffer_alloc(size_t size);
  */
 void video_buffer_release(struct video_buffer *buf);
 
-/* fourcc - four-character-code */
-#define video_fourcc(a, b, c, d)                                                                   \
-	((uint32_t)(a) | ((uint32_t)(b) << 8) | ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24))
-
 /**
- * @defgroup video_pixel_formats Video pixel formats
- * @{
- */
-
-/**
- * @name Bayer formats
- * @{
- */
-
-/** BGGR8 pixel format */
-#define VIDEO_PIX_FMT_BGGR8 video_fourcc('B', 'G', 'G', 'R') /*  8  BGBG.. GRGR.. */
-/** GBRG8 pixel format */
-#define VIDEO_PIX_FMT_GBRG8 video_fourcc('G', 'B', 'R', 'G') /*  8  GBGB.. RGRG.. */
-/** GRBG8 pixel format */
-#define VIDEO_PIX_FMT_GRBG8 video_fourcc('G', 'R', 'B', 'G') /*  8  GRGR.. BGBG.. */
-/** RGGB8 pixel format */
-#define VIDEO_PIX_FMT_RGGB8 video_fourcc('R', 'G', 'G', 'B') /*  8  RGRG.. GBGB.. */
-
-/**
- * @}
- */
-
-/**
- * @name RGB formats
- * @{
- */
-
-/** RGB565 pixel format */
-#define VIDEO_PIX_FMT_RGB565 video_fourcc('R', 'G', 'B', 'P') /* 16  RGB-5-6-5 */
-
-/** XRGB32 pixel format */
-#define VIDEO_PIX_FMT_XRGB32 video_fourcc('B', 'X', '2', '4') /* 32  XRGB-8-8-8-8 */
-
-/**
- * @}
- */
-
-/**
- * @name YUV formats
- * @{
- */
-
-/** YUYV pixel format */
-#define VIDEO_PIX_FMT_YUYV video_fourcc('Y', 'U', 'Y', 'V') /* 16  Y0-Cb0 Y1-Cr0 */
-
-/** XYUV32 pixel format */
-#define VIDEO_PIX_FMT_XYUV32 video_fourcc('X', 'Y', 'U', 'V') /* 32  XYUV-8-8-8-8 */
-
-/**
+ * @brief Obtain the number of bits that a pixel requires for a given format
  *
- * @}
+ * @param pixelformat The fourcc integer of the format as defined in
+ *        @c <zephyr/drivers/video/formats.h>
+ *
+ * @retval 0 if the format is unhandled or if it is variable umber of bits
+ * @retval bit size of one pixel for this format
  */
-
-/**
- * @name JPEG formats
- * @{
- */
-
-/** JPEG pixel format */
-#define VIDEO_PIX_FMT_JPEG video_fourcc('J', 'P', 'E', 'G') /*  8  JPEG */
-
-/**
- * @}
- */
-
-/**
- * @}
- */
+static inline uint8_t video_bits_per_pixel(uint32_t pixelformat)
+{
+	switch (pixelformat) {
+	case VIDEO_PIX_FMT_BGGR8:
+		return VIDEO_PIX_FMT_BGGR8_BITS;
+	case VIDEO_PIX_FMT_GBRG8:
+		return VIDEO_PIX_FMT_GBRG8_BITS;
+	case VIDEO_PIX_FMT_GRBG8:
+		return VIDEO_PIX_FMT_GRBG8_BITS;
+	case VIDEO_PIX_FMT_RGGB8:
+		return VIDEO_PIX_FMT_RGGB8_BITS;
+	case VIDEO_PIX_FMT_RGB565:
+		return VIDEO_PIX_FMT_RGB565_BITS;
+	case VIDEO_PIX_FMT_XRGB32:
+		return VIDEO_PIX_FMT_XRGB32_BITS;
+	case VIDEO_PIX_FMT_YUYV:
+		return VIDEO_PIX_FMT_YUYV_BITS;
+	case VIDEO_PIX_FMT_XYUV32:
+		return VIDEO_PIX_FMT_XYUV32_BITS;
+	default:
+		/* Variable number of bits per pixel or unknown format */
+		return 0;
+	}
+}
 
 #ifdef __cplusplus
 }
@@ -835,4 +820,4 @@ void video_buffer_release(struct video_buffer *buf);
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_VIDEO_H_ */
+#endif /* ZEPHYR_INCLUDE_DRIVERS_VIDEO_H_ */
