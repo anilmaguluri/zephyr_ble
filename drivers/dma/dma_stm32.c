@@ -30,7 +30,13 @@ LOG_MODULE_REGISTER(dma_stm32, CONFIG_DMA_LOG_LEVEL);
 #endif
 
 #if DT_NODE_HAS_STATUS_OKAY(DT_DRV_INST(0))
-#if DT_INST_IRQ_HAS_IDX(0, 7)
+
+/**
+ * STM32WB0 series has 8 streams but they are all mapped to
+ * a single interrupt. We must add a series-specific check to
+ * ensure the proper number of streams is used by the driver.
+ */
+#if DT_INST_IRQ_HAS_IDX(0, 7) || defined(CONFIG_SOC_SERIES_STM32WB0X)
 #define DMA_STM32_0_STREAM_COUNT 8
 #elif DT_INST_IRQ_HAS_IDX(0, 6)
 #define DMA_STM32_0_STREAM_COUNT 7
@@ -780,13 +786,13 @@ static void dma_stm32_config_irq_0(const struct device *dev)
 	ARG_UNUSED(dev);
 
 	DMA_STM32_IRQ_CONNECT(0, 0);
+#if DT_INST_IRQ_HAS_IDX(0, 1)
 	DMA_STM32_IRQ_CONNECT(0, 1);
-#ifndef CONFIG_DMA_STM32_SHARED_IRQS
+#if DT_INST_IRQ_HAS_IDX(0, 2)
 	DMA_STM32_IRQ_CONNECT(0, 2);
-#endif /* CONFIG_DMA_STM32_SHARED_IRQS */
 #if DT_INST_IRQ_HAS_IDX(0, 3)
 	DMA_STM32_IRQ_CONNECT(0, 3);
-#ifndef CONFIG_DMA_STM32_SHARED_IRQS
+#if DT_INST_IRQ_HAS_IDX(0, 4)
 	DMA_STM32_IRQ_CONNECT(0, 4);
 #if DT_INST_IRQ_HAS_IDX(0, 5)
 	DMA_STM32_IRQ_CONNECT(0, 5);
@@ -794,12 +800,13 @@ static void dma_stm32_config_irq_0(const struct device *dev)
 	DMA_STM32_IRQ_CONNECT(0, 6);
 #if DT_INST_IRQ_HAS_IDX(0, 7)
 	DMA_STM32_IRQ_CONNECT(0, 7);
-#endif /* DT_INST_IRQ_HAS_IDX(0, 3) */
-#endif /* DT_INST_IRQ_HAS_IDX(0, 5) */
-#endif /* DT_INST_IRQ_HAS_IDX(0, 6) */
 #endif /* DT_INST_IRQ_HAS_IDX(0, 7) */
-#endif /* CONFIG_DMA_STM32_SHARED_IRQS */
-/* Either 3 or 5 or 6 or 7 or 8 channels for DMA across all stm32 series. */
+#endif /* DT_INST_IRQ_HAS_IDX(0, 6) */
+#endif /* DT_INST_IRQ_HAS_IDX(0, 5) */
+#endif /* DT_INST_IRQ_HAS_IDX(0, 4) */
+#endif /* DT_INST_IRQ_HAS_IDX(0, 3) */
+#endif /* DT_INST_IRQ_HAD_IDX(0, 2) */
+#endif /* DT_INST_IRQ_HAD_IDX(0, 1) */
 }
 
 DMA_STM32_INIT_DEV(0);
