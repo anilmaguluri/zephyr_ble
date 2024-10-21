@@ -60,8 +60,25 @@ def init_color(colorama_strip):
     colorama.init(strip=colorama_strip)
 
 
+def python_version_check():
+    min_ver = (3, 10)
+    if sys.version_info < min_ver:
+            logger.error(
+                "Obsolete Python version!"
+                f" Currently, Twister requires at least Python {'.'.join(min_ver)}."
+                f" You are trying to use Python {sys.version}."
+                " Install a newer Python version and retry."
+            )
+            return False
+    return True
+
+
 def main(options: argparse.Namespace, default_options: argparse.Namespace):
     start_time = time.time()
+
+    # Verify Python version - pass is truthy
+    if not python_version_check():
+        return 1
 
     # Configure color output
     color_strip = False if options.force_color else None
