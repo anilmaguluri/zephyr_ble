@@ -74,7 +74,7 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/class/usb_hid.h>
-#include <zephyr/drivers/video-controls.h>
+#include <zephyr/drivers/video/controls.h>
 #include <zephyr/drivers/video.h>
 #include <zephyr/drivers/watchdog.h>
 

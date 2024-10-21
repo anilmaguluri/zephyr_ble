@@ -14,7 +14,7 @@
 LOG_MODULE_REGISTER(main);
 
 #ifdef CONFIG_TEST
-#include <zephyr/drivers/video-controls.h>
+#include <zephyr/drivers/video/controls.h>
 
 #include "check_test_pattern.h"
 
